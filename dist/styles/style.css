@@ -1,0 +1,75 @@
+html {
+  font-size: 16px;
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+}
+
+main {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.sidebar {  
+  display: flex;
+  flex-direction: row;
+  
+  height: 100%;
+  width: 27%;
+  position: fixed;
+  background-color: grey;
+  opacity: 95%;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  transition-duration: 1.5s;
+}
+
+.sidebarbtn {
+  transition-duration: 0.2s;
+  background-color: black;
+  width: 3%;
+  opacity: 70%;
+  height: 100%;
+  border: none;
+}
+
+.sidebarbtn:hover {
+  background-color: #b5b5b5;
+}
+
+.sidebarbtn:active {
+  background-color: black;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#array-view {
+  box-sizing: border-box;
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+}
+
+.p5Canvas {
+  display: block;
+  margin: 0;
+}
+
+#settings {
+  box-sizing: border-box;
+  margin: 0;
+}
