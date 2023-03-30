@@ -2,9 +2,10 @@ let displayArray = [];
 let nArrayElements = 5;
 let algoNum = 0;
 let selectedElementIndices = [];
+let started;
 
 let audioCtx = null;
-const audioMult = 500;
+const audioMult = 450;
 const audioDurationSec = .3;
 
 function playNote(freq) {
@@ -14,23 +15,25 @@ function playNote(freq) {
                     window.webkitAudioContext)();
   }
   const nDecimals = 2;
-  const osc = new OscillatorNode(audioCtx, {
+  const oscNode = new OscillatorNode(audioCtx, {
     frequency: Number(freq).toFixed(nDecimals),
   });
-  osc.start();
-  osc.stop(audioCtx.currentTime+audioDurationSec);
 
-  const gainVal = 1;
+  oscNode.start();
+  oscNode.stop(audioCtx.currentTime+audioDurationSec);
+
+  const popTime = .07;
   const gainNode = audioCtx.createGain();
-  gainNode.gain.value = gainVal;
-  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+audioDurationSec);
-  osc.connect(gainNode);
+  //ramps the volume from essentially 0 to desired and from desired to 0 to reduce popping sound
+  //start
+  gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(Number(volume).toFixed(nDecimals), audioCtx.currentTime+parseFloat(popTime));
+  //end
+  gainNode.gain.setValueAtTime(Number(volume).toFixed(nDecimals), audioCtx.currentTime+audioDurationSec-parseFloat(popTime));
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+audioDurationSec);
+  oscNode.connect(gainNode);
 
-  const volumeGainNode = audioCtx.createGain();
-  volumeGainNode.gain.value = Number(volume).toFixed(nDecimals);
-  gainNode.connect(volumeGainNode);
-
-  volumeGainNode.connect(audioCtx.destination);
+  gainNode.connect(audioCtx.destination);
 }
 
 let mainP5 = new p5(p => {

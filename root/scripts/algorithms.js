@@ -1,4 +1,8 @@
 function selectIndex(ms, index) {
+    if(!started) {
+        throw new Error('Sorting while stopped');
+    }
+
     selectedElementIndices.push(index);
     if(displayArray[index] != null) {
         playNote(audioMult*(displayArray[index]/(nArrayElements)));

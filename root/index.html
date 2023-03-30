@@ -28,7 +28,7 @@
           <h3>Settings</h3>
           <form>
             <label class="col-form-label">Number of Elements</label>
-            <input type="range" value="10" min="2" max="500" class="form-control-range form-control-range-lg m-2 w-100 mx-auto" id="n-elements"></input>
+            <input type="range" value="25" min="2" max="100" class="form-control-range form-control-range-lg m-2 w-100 mx-auto" id="n-elements"></input>
           </form>
           <select class="form-control form-control-lg w-100 m-2 mx-auto" title="Algorithm" data-style="btn-primary" id="selected-algorithm-drop">
             <option value="0">Selection Sort</option>
@@ -40,9 +40,10 @@
           </select>
           <button class="btn btn-primary btn-lg btn-block mx-auto w-100 m-2" type="button" id="randomize-btn">Randomize</button>
           <button class="btn btn-primary btn-lg btn-block mx-auto w-100 m-2" type="button" id="start-btn">Start</button>
+          <button class="btn btn-primary btn-lg btn-block mx-auto w-100 m-2" type="button" id="stop-btn">Stop</button>
           <form>
             <label class="col-form-label">Volume</label>
-            <input type="range" value="0.25" min="0" max="1" step=".01" class="form-control-range form-control-range-lg w-100" id="volume"></input>
+            <input type="range" value="0.1" min="0" max="1" step=".01" class="form-control-range form-control-range-lg w-100" id="volume"></input>
           </form>
         </div>
       </div>

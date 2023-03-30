@@ -2,25 +2,32 @@ let volume;
 
 let settingsSideBarP5 = new p5(p => {
     const sideBar = document.getElementById('right-sidebar');
-    const sidebarBtn = sideBar.querySelector('.sidebarbtn');
     const sidebarAlgoDrop = document.getElementById('selected-algorithm-drop');
-    const nElementsSlider = document.getElementById('n-elements');
+    const timeStatText = document.getElementById('time-stat-text');
+
+    const sidebarBtn = sideBar.querySelector('.sidebarbtn');
     const randomizeBtn = document.getElementById('randomize-btn');
     const startBtn = document.getElementById('start-btn');
-    const timeStatText = document.getElementById('time-stat-text');
+    const stopBtn = document.getElementById('stop-btn');
+
+    const nElementsSlider = document.getElementById('n-elements');
     const volumeSlider = document.getElementById('volume');
-    p.started = false;
+
     p.algoTimeMillis = 0;
 
     p.setup = () => {
         p.createCanvas(0, 0);
-        sidebarBtn.addEventListener('click', toggleRightSidebar); 
         sidebarAlgoDrop.addEventListener('change', p.updateAlgo);
-        nElementsSlider.addEventListener('input', p.updateNElements);
+
+        sidebarBtn.addEventListener('click', toggleRightSidebar); 
         randomizeBtn.addEventListener('click', p.shuffleArray);
         startBtn.addEventListener('click', p.start);
+        stopBtn.addEventListener('click', p.stop);
+
+        nElementsSlider.addEventListener('input', p.updateNElements);
         volumeSlider.addEventListener('input', p.updateVolume);
 
+        nArrayElements = nElementsSlider.value;
         volume = volumeSlider.value;
     }
 
@@ -30,19 +37,19 @@ let settingsSideBarP5 = new p5(p => {
     }
 
     p.updateAlgo = (event) => {
-        if(p.started) return;
+        if(started) return;
         algoNum = Number(event.target.value);
     }
 
     p.updateNElements = (event) => {
-        if(p.started) return;
+        if(started) return;
         displayArray = [];
         nArrayElements = event.target.value;
         for(let i = 1; i <= nArrayElements; i++) displayArray.push(i);
     }
 
     p.shuffleArray = () => {
-        if(p.started) return;
+        if(started) return;
         for (let i = displayArray.length-1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             const temp = displayArray[i];
@@ -52,11 +59,15 @@ let settingsSideBarP5 = new p5(p => {
     }
 
     p.start = () => {
-        if(p.started) return;
-        p.started = true;
+        if(started) return;
+        started = true;
         p.algoTimeMillis = 0;
         p.updateTimeStatText();
         p.sort();
+    }
+
+    p.stop = () => {
+        started = false;
     }
 
     p.sort = async () => {
@@ -66,16 +77,20 @@ let settingsSideBarP5 = new p5(p => {
             p.updateTimeStatText();
         }, intervalMillis);
 
-        switch(algoNum) {
-          case 0: await Sorter.selectionSort(displayArray); break;
-          case 1: await Sorter.bubbleSort(displayArray); break;
-          case 2: await Sorter.insertionSort(displayArray); break;
-          case 3: await Sorter.heapSort(displayArray); break;
-          case 4: await Sorter.mergeSort(displayArray); break;
-          case 5: await Sorter.quickSort(displayArray); break;
-          default: break;
+        try {
+            switch(algoNum) {
+                case 0: await Sorter.selectionSort(displayArray); break;
+                case 1: await Sorter.bubbleSort(displayArray); break;
+                case 2: await Sorter.insertionSort(displayArray); break;
+                case 3: await Sorter.heapSort(displayArray); break;
+                case 4: await Sorter.mergeSort(displayArray); break;
+                case 5: await Sorter.quickSort(displayArray); break;
+                default: break;
+            }
+        } catch (e) {
+            
         }
-        p.started = false;
+        started = false;
         selectedElementIndex = -1;
         clearInterval(timer);
     }
