@@ -6,7 +6,7 @@ let started;
 
 let audioCtx = null;
 const audioMult = 450;
-const audioDurationSec = .3;
+const audioDurationSec = .35;
 
 function playNote(freq) {
   if(audioCtx == null) {
@@ -14,13 +14,12 @@ function playNote(freq) {
                     window.AudioContext || 
                     window.webkitAudioContext)();
   }
-  const nDecimals = 2;
-  const oscNode = new OscillatorNode(audioCtx, {
-    frequency: Number(freq).toFixed(nDecimals),
-  });
 
-  oscNode.start();
-  oscNode.stop(audioCtx.currentTime+audioDurationSec);
+  const nDecimals = 2;
+  const oscNode = audioCtx.createOscillator();
+  oscNode.frequency.value = Number(freq).toFixed(nDecimals);
+  oscNode.type = "sine";
+  oscNode.decay = 0;
 
   const popTime = .07;
   const gainNode = audioCtx.createGain();
@@ -29,11 +28,12 @@ function playNote(freq) {
   gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
   gainNode.gain.exponentialRampToValueAtTime(Number(volume).toFixed(nDecimals), audioCtx.currentTime+parseFloat(popTime));
   //end
-  gainNode.gain.setValueAtTime(Number(volume).toFixed(nDecimals), audioCtx.currentTime+audioDurationSec-parseFloat(popTime));
-  gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+audioDurationSec);
-  oscNode.connect(gainNode);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+audioDurationSec-parseFloat(popTime));
 
-  gainNode.connect(audioCtx.destination);
+  const compressor = audioCtx.createDynamicsCompressor();
+  oscNode.connect(gainNode).connect(compressor).connect(audioCtx.destination);
+  oscNode.start();
+  oscNode.stop(audioCtx.currentTime+audioDurationSec);
 }
 
 let mainP5 = new p5(p => {
