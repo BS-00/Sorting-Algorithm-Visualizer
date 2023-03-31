@@ -74,17 +74,16 @@ class Sorter {
 
     static async quickSort(arr, start_i=0, end=arr.length) {
         let size = (end-start_i);
-        if(size <= 2) {
-            if((size == 2) && (arr[start_i] > arr[end-1]))  {
-                Sorter.#swap(arr, start_i, end-1);
-            }
-            return;
+        if((size == 2) && (arr[start_i] > arr[end-1])) {
+            Sorter.#swap(arr, start_i, end-1);
         }
+        if(size <= 2) return;
 
         let pivot_i;
         await Sorter.#partition(arr, start_i, end).then(res => {
             pivot_i = res;
         });
+        await selectIndex(Sorter.delayMillis, pivot_i);
         await Sorter.quickSort(arr, start_i, pivot_i);
         await Sorter.quickSort(arr, pivot_i+1, end);
     }
@@ -209,11 +208,15 @@ class Sorter {
         }
 
         if(arr[large_element_i] > arr[start_i]) {
+            await Promise.all([selectIndex(Sorter.delayMillis, start_i),
+                               selectIndex(Sorter.delayMillis, large_element_i-1)]);
             Sorter.#swap(arr, start_i, large_element_i-1);
             return large_element_i-1;
         }
 
         //swap the pivot with the last element less than the pivot
+        await Promise.all([selectIndex(Sorter.delayMillis, start_i),
+                          selectIndex(Sorter.delayMillis, large_element_i)]);
         Sorter.#swap(arr, start_i, large_element_i);
         return large_element_i;
     }
