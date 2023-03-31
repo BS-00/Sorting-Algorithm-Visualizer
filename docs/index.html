@@ -14,21 +14,23 @@
     <script src="scripts/main.js" type="text/JavaScript" defer></script>
     
     <title>Sorting algorithm visualizer</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   </head>
+  
   <body class="h-100 m-0">
     <div class="m-0 w-100 h-100" id="array-view"></div>
     <div class="sidebar" id="right-sidebar">
       <button class="button sidebarbtn"></button>
-      <div class="sidebar-content m-0 mx-auto">
-        <p class="h1 text-center">Statistics</p>
+      <div class="sidebar-content w-100 m-0">
+        <p class="h1 text-center ">Statistics</p>
         <div id="sorting-stats">
-          <p class="text-left fs-5" id="time-stat-text">Time: 0s</p>
+          <p class="text-left fs-5 ms-5" id="time-stat-text">Time: 0s</p>
         </div>
-        <div id="settings">
+        <div class="text-center m-2" id="settings">
           <p class="h1 text-center">Settings</p>
           <form lass="text-center">
             <label class="fs-4 m-1">Number of Elements</label>
-            <input type="range" value="25" min="2" max="100" class="form-control-range form-control-range-lg m-2 w-100 mx-auto" id="n-elements"></input>
+            <input type="range" value="30" min="2" max="200" class="form-control-range form-control-range-lg m-2 w-100 mx-auto" id="n-elements"></input>
           </form>
           <select class="form-control form-control-lg w-100 m-2 mx-auto" title="Algorithm" data-style="btn-primary" id="selected-algorithm-drop">
             <option value="0">Selection Sort</option>
