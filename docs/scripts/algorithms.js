@@ -113,11 +113,9 @@ class Sorter {
     static async combSort(arr, start_i=0, end=arr.length) {
         let swap = true;
         let gap_size = end-start_i;
-        while ((swap == true) || (gap_size > 1)) {
-            gap_size = Math.max(1, Math.floor(gap_size/Sorter.#comb_shrink_factor, 10));
+        while (swap == true || gap_size != 1) {
             swap = false;
-            let left_i = start_i, 
-                right_i = left_i+gap_size;
+            let left_i = start_i, right_i = left_i+gap_size;
             while (right_i < end) {
                 await Promise.all([selectIndex(Sorter.delayMillis, left_i),
                                    selectIndex(Sorter.delayMillis, right_i)]);
@@ -127,6 +125,33 @@ class Sorter {
                 }
                 left_i++;
                 right_i++;
+            }
+            gap_size = Math.max(1, Math.floor(gap_size/Sorter.#comb_shrink_factor));
+        }
+    }
+
+    static async brickSort(arr, start_i=0, end=arr.length) {
+        let swap_even = true, swap_odd = true;
+        let offset = 1; //1 or 0
+        while(swap_even || swap_odd) {
+            if(offset == 0) {
+                offset = 1;
+                swap_even = false;
+            }
+            else {
+                offset = 0;
+                swap_odd = false;
+            }
+
+            for(let right_i = start_i+offset+1; right_i < end; right_i+=2) {
+                const left_i = right_i-1;
+                await Promise.all([selectIndex(Sorter.delayMillis, left_i),
+                                   selectIndex(Sorter.delayMillis, right_i)]);
+                if (arr[left_i] > arr[right_i]) {
+                    Sorter.#swap(arr, left_i, right_i);
+                    if (offset == 0) swap_odd = true;
+                    else swap_even = true;
+                }
             }
         }
     }

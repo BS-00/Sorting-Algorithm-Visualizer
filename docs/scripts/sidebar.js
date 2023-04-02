@@ -86,6 +86,7 @@ let settingsSideBarP5 = new p5(p => {
                 case 5: await Sorter.quickSort(displayArray); break;
                 case 6: await Sorter.timSort(displayArray); break;
                 case 7: await Sorter.combSort(displayArray); break;
+                case 8: await Sorter.brickSort(displayArray); break;
                 default: break;
             }
         } catch (e) {
