@@ -1,5 +1,4 @@
 let volume;
-
 let settingsSideBarP5 = new p5(p => {
     const sideBar = document.getElementById('right-sidebar');
     const sidebarAlgoDrop = document.getElementById('selected-algorithm-drop');
@@ -85,10 +84,12 @@ let settingsSideBarP5 = new p5(p => {
                 case 3: await Sorter.heapSort(displayArray); break;
                 case 4: await Sorter.mergeSort(displayArray); break;
                 case 5: await Sorter.quickSort(displayArray); break;
+                case 6: await Sorter.timSort(displayArray); break;
+                case 7: await Sorter.combSort(displayArray); break;
                 default: break;
             }
         } catch (e) {
-            
+            //stopped
         }
         started = false;
         selectedElementIndex = -1;

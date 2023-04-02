@@ -32,14 +32,14 @@ class Sorter {
         }
     }
 
-    static async insertionSort(arr) {
-        for(let i = 1; i < arr.length; i++) {
+    static async insertionSort(arr, start_i=0, end=arr.length) {
+        for(let i = start_i+1; i < end; i++) {
             let prev_i = i-1;
             if(arr[prev_i] < arr[i]) continue; //items are in order
             
             //find where to insert it
-            let insert_i = 0;
-            for(let j = prev_i; j >= 0; j--) {
+            let insert_i = start_i;
+            for(let j = prev_i; j >= start_i; j--) {
                 if(arr[j] > arr[i]) insert_i = j;
                 await this.selectionSort(Sorter.delayMillis);
             }
@@ -63,13 +63,13 @@ class Sorter {
         }
     }
 
-    static async mergeSort(arr, start_i=0, end_i=arr.length) {
-        if (end_i-start_i < 2) return;
+    static async mergeSort(arr, start_i=0, end=arr.length) {
+        if ((end-start_i) < 2) return;
 
-        let mid = Math.floor((end_i+start_i)/2);
+        let mid = Math.floor((end+start_i)/2);
         await Sorter.mergeSort(arr, start_i, mid);
-        await Sorter.mergeSort(arr, mid, end_i);
-        await Sorter.#merge(arr, start_i, mid, end_i);
+        await Sorter.mergeSort(arr, mid, end);
+        await Sorter.#merge(arr, start_i, mid, end);
     }
 
     static async quickSort(arr, start_i=0, end=arr.length) {
@@ -86,6 +86,49 @@ class Sorter {
         await selectIndex(Sorter.delayMillis, pivot_i);
         await Sorter.quickSort(arr, start_i, pivot_i);
         await Sorter.quickSort(arr, pivot_i+1, end);
+    }
+    
+    static #run_size = 16; //should be a power of two
+    static async timSort(arr, start_i=0, end=arr.length) {
+        //insertion sort each run
+        const size = (end-start_i);
+        for(let start_insert_i = start_i; start_insert_i < end-1; start_insert_i+=Sorter.#run_size) {
+            const end_insert = Math.min(start_insert_i+Sorter.#run_size, end);
+            await Sorter.insertionSort(arr, start_insert_i, end_insert);
+        }
+
+        //merge
+        for(let run_size = Sorter.#run_size; run_size <= size; run_size*=2) { //while the runs size is less than the size of the array
+            //merge every run
+            for(let start_merge_i = start_i; start_merge_i+run_size < end-1; start_merge_i+=(2*run_size)) {
+                const start2_merge_i = start_merge_i+run_size;
+                const end_merge = Math.min(start2_merge_i+run_size, end);
+    
+                await Sorter.#merge(arr, start_merge_i, start2_merge_i, end_merge);
+            }
+        }
+    }
+
+    static #comb_shrink_factor = 1.3;
+    static async combSort(arr, start_i=0, end=arr.length) {
+        let swap = true;
+        let gap_size = end-start_i;
+        while ((swap == true) || (gap_size > 1)) {
+            gap_size = Math.max(1, Math.floor(gap_size/Sorter.#comb_shrink_factor, 10));
+            swap = false;
+            let left_i = start_i, 
+                right_i = left_i+gap_size;
+            while (right_i < end) {
+                await Promise.all([selectIndex(Sorter.delayMillis, left_i),
+                                   selectIndex(Sorter.delayMillis, right_i)]);
+                if (arr[left_i] > arr[right_i]) {
+                    Sorter.#swap(arr, left_i, right_i);
+                    swap = true;
+                }
+                left_i++;
+                right_i++;
+            }
+        }
     }
 
     //private helper methods
@@ -158,14 +201,14 @@ class Sorter {
         }
     }
 
-    static async #merge(arr, start1_i, start2_i, end_i) {
+    static async #merge(arr, start1_i, start2_i, end) {
         let ret = [];
         let container1_i = start1_i, container2_i = start2_i;
 
-        for(let i = 0; i < (end_i-start1_i); i++) {
+        for(let i = 0; i < (end-start1_i); i++) {
             await Promise.all([selectIndex(Sorter.delayMillis, container1_i),
                                selectIndex(Sorter.delayMillis, container2_i)]);
-            if((container1_i < start2_i) && (container2_i >= end_i || arr[container1_i] <= arr[container2_i])) {
+            if((container1_i < start2_i) && (container2_i >= end || arr[container1_i] <= arr[container2_i])) {
                 ret.push(arr[container1_i]);
                 container1_i++;
             } else {
