@@ -18,10 +18,10 @@ main {
   flex-direction: row;
   
   height: 100%;
-  width: 27%;
+  width: 20%;
   position: fixed;
   background-color: rgb(154, 147, 147);
-  opacity: 95%;
+  opacity: 97%;
   top: 0;
   right: 0;
   z-index: 1;
