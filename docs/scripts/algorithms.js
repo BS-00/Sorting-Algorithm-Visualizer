@@ -179,26 +179,29 @@ class Sorter {
         }
     }
 
-    static #shell_shrink_factor = 2;
+    static #get_shell_gap_size(n) {
+        //OEIS: A000225
+        return Math.pow(2,n)-1; 
+    }
+
     static async shellSort(arr, start_i=0, end=arr.length) {
-        let swap = true;
-        let gap_size = Math.floor((end-start_i)/Sorter.#shell_shrink_factor);
-        while ((swap == true || gap_size > 1)) {
-            swap = false;
-            let left_i = start_i, right_i = left_i+gap_size;
-            while (right_i < end) {
-                await Promise.all([selectIndex(Sorter.delayMillis, left_i),
-                                   selectIndex(Sorter.delayMillis, right_i)]);
-                if (arr[left_i] > arr[right_i]) {
-                    Sorter.#swap(arr, left_i, right_i);
-                    swap = true;
+       let gap_num = Math.floor(Math.log(end-start_i)/Math.LN2);
+        for(let gap_size = 0; gap_size != 1; gap_num--) {
+            gap_size = Sorter.#get_shell_gap_size(gap_num);
+            console.log(gap_size);
+
+            for(let i = start_i+gap_size; i < end; i++) {
+                let insert_i = i-gap_size, right_i = i;
+                while(insert_i >= start_i) {
+                    await Promise.all([selectIndex(Sorter.delayMillis, right_i), 
+                                       selectIndex(Sorter.delayMillis, insert_i)]);
+                    if (arr[insert_i] <= arr[right_i]) break;
+                    Sorter.#swap(arr, insert_i, right_i);
+                    right_i = insert_i;
+                    insert_i -= gap_size;
                 }
-                left_i++;
-                right_i++;
             }
-            gap_size = Math.floor(gap_size/Sorter.#shell_shrink_factor);
         }
-        await Sorter.insertionSort(arr, start_i, end);
     }
 
     //private helper methods
