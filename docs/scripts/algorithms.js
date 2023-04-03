@@ -156,6 +156,21 @@ class Sorter {
         }
     }
 
+    static async gnomeSort(arr, start_i=0, end=arr.length) {
+        let right_i = start_i+1;
+        while(right_i < end) {
+            if(right_i == start_i) right_i++;
+            const left_i = right_i-1;
+            await Promise.all([selectIndex(Sorter.delayMillis, left_i),
+                               selectIndex(Sorter.delayMillis, right_i)]);
+
+            if(arr[left_i] > arr[right_i]) {
+                Sorter.#swap(arr, left_i, right_i);
+                right_i--;
+            } else right_i++;
+        }
+    }
+
     //private helper methods
     static #swap(arr, i1, i2) {
         let tmp = arr[i1];
