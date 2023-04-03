@@ -188,7 +188,6 @@ class Sorter {
        let gap_num = Math.floor(Math.log(end-start_i)/Math.LN2);
         for(let gap_size = 0; gap_size != 1; gap_num--) {
             gap_size = Sorter.#get_shell_gap_size(gap_num);
-            console.log(gap_size);
 
             for(let i = start_i+gap_size; i < end; i++) {
                 let insert_i = i-gap_size, right_i = i;

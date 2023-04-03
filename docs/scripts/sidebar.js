@@ -27,11 +27,11 @@ let settingsSideBarP5 = new p5(p => {
         volumeSlider.addEventListener('input', p.updateVolume);
 
         nArrayElements = nElementsSlider.value;
-        volume = volumeSlider.value*.75; //find a cleaner way to do this
+        volume = volumeSlider.value*.5; //find a cleaner way to do this
     }
 
     p.updateVolume = (event) => {
-        const max_vol = .75;
+        const max_vol = .5;
         const frac = parseFloat(event.target.value, 10)/parseFloat(event.target.max, 10);
         volume = Math.pow(frac, 2)*max_vol;
     }
