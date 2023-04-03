@@ -182,6 +182,10 @@ class Sorter {
         }
     }
 
+    static async introSort(arr, start_i=0, end=arr.length) {
+        await Sorter.#introSort(arr, 2*Math.log(end-start_i), start_i, end);
+    }
+
     static #get_shell_gap_size(n) {
         //OEIS: A000225
         return Math.pow(2,n)-1; 
@@ -333,5 +337,20 @@ class Sorter {
                           selectIndex(Sorter.delayMillis, large_element_i)]);
         Sorter.#swap(arr, start_i, large_element_i);
         return large_element_i;
+    }
+
+    static #introSort_inertion_size = 16;
+    static async #introSort(arr, depth, start_i=0, end=arr.length) {
+        if (end-start_i <= Sorter.#introSort_inertion_size) await Sorter.insertionSort(arr, start_i, end); 
+        else if (depth == 0) await Sorter.heapSort(arr, start_i, end);
+        else {
+            //quicksort
+            let pivot_i;
+            await Sorter.#partition(arr, start_i, end).then(res => { pivot_i = res; });
+            await Promise.all([selectIndex(Sorter.delayMillis, pivot_i),
+                               Sorter.#introSort(arr, depth-1, start_i, pivot_i)]);
+            await Promise.all([selectIndex(Sorter.delayMillis, pivot_i),
+                               Sorter.#introSort(arr, depth-1, pivot_i+1, end)]);
+        }
     }
 }

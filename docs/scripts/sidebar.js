@@ -88,6 +88,7 @@ let settingsSideBarP5 = new p5(p => {
                 case 9: await Sorter.gnomeSort(displayArray); break;
                 case 10: await Sorter.shellSort(displayArray); break;
                 case 11: await Sorter.cocktailSort(displayArray); break;
+                case 12: await Sorter.introSort(displayArray); break;
                 default: break;
             }
         } catch (e) {
