@@ -203,6 +203,40 @@ class Sorter {
         }
     }
 
+    static async cocktailSort(arr, start_i=0, end=arr.length) {
+        let sorted_right_i = end, 
+            sorted_left_i = start_i-1;
+        let inc = 1;
+        while (sorted_left_i < sorted_right_i) {
+            let swap_left_i = sorted_right_i, 
+                swap_right_i = sorted_left_i;
+
+            let right_i;
+            if (inc == 1) right_i = sorted_left_i+2;
+            else right_i = sorted_right_i-1;
+            let left_i = right_i-1;
+            while (right_i < sorted_right_i && left_i > sorted_left_i) {
+                await Promise.all([selectIndex(Sorter.delayMillis, right_i), 
+                                   selectIndex(Sorter.delayMillis, left_i)]);
+                if(arr[left_i] > arr[right_i]) {
+                    Sorter.#swap(arr, left_i, right_i);
+                    if (inc == 1) swap_right_i = right_i;
+                    else swap_left_i = left_i;
+                }
+                right_i+=inc;
+                left_i+=inc;
+            }
+            if(inc == 1) {
+                sorted_right_i = swap_right_i;
+                inc = -1;
+            }
+            else {
+                sorted_left_i = swap_left_i;
+                inc = 1;
+            }
+        }
+    }
+
     //private helper methods
     static #swap(arr, i1, i2) {
         let tmp = arr[i1];
