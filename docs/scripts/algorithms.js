@@ -3,6 +3,11 @@ function selectIndex(ms, index) {
         throw new Error('Sorting while stopped');
     }
 
+    if(ms == 0) {
+        selectedElementIndices.splice(selectedElementIndices.indexOf(index), 1);
+        return;
+    }
+
     selectedElementIndices.push(index);
     if(displayArray[index] != null) {
         playNote(audioMult*(displayArray[index]/(nArrayElements)));

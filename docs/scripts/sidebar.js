@@ -11,9 +11,11 @@ let settingsSideBarP5 = new p5(p => {
 
     const nElementsSlider = document.getElementById('n-elements');
     const volumeSlider = document.getElementById('volume');
+    const delaySlider = document.getElementById('delay');
 
     p.algoTimeMillis = 0;
     p.maxVol = .15; //from 0 to 1
+    p.delayMillis;
 
     p.setup = () => {
         p.createCanvas(0, 0);
@@ -26,14 +28,20 @@ let settingsSideBarP5 = new p5(p => {
 
         nElementsSlider.addEventListener('input', p.updateNElements);
         volumeSlider.addEventListener('input', p.updateVolume);
+        delaySlider.addEventListener('input', p.updateDelay);
 
         nArrayElements = nElementsSlider.value;
         volume = volumeSlider.value*p.maxVol; //find a cleaner way to do this
+        p.delayMillis = parseInt(delaySlider.value, 10);
     }
 
     p.updateVolume = (event) => {
         const frac = parseFloat(event.target.value, 10)/parseFloat(event.target.max, 10);
         volume = Math.pow(frac, 2)*p.maxVol;
+    }
+
+    p.updateDelay = (event) => {
+        p.delayMillis = parseInt(event.target.value, 10);
     }
 
     p.updateAlgo = (event) => {
@@ -74,6 +82,7 @@ let settingsSideBarP5 = new p5(p => {
             p.updateTimeStatText();
         }, intervalMillis);
 
+        Sorter.delayMillis = p.delayMillis;
         try {
             switch(algoNum) {
                 case 0: await Sorter.selectionSort(displayArray); break;
