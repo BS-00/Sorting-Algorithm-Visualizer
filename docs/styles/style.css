@@ -19,7 +19,7 @@ main {
   
   height: 100%;
   width: 22%;
-  min-width: 15rem;
+  min-width: 20rem;
 
   position: fixed;
   background-color: rgb(154, 147, 147);
@@ -33,7 +33,10 @@ main {
 .sidebarbtn {
   transition-duration: 0.2s;
   background-color: black;
+  
   width: 3%;
+  min-width: .2rem;
+
   opacity: 70%;
   height: 100%;
   border: none;
