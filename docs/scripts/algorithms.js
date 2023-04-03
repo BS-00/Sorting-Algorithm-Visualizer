@@ -56,17 +56,20 @@ class Sorter {
             }
         }
     }
+    
 
-    static async heapSort(arr) {
-        for(let i = arr.length-1; i > 1; i--) {
-            await Sorter.#heapify(arr, i+1);
-            Sorter.#swap(arr, 0, i);
+   static async heapSort(arr, start_i=0, end=arr.length) {
+        //build a heap from the array
+        for(let heap_i = Math.floor((end-start_i)/2)-1;  heap_i >= start_i; heap_i--) {
+            await Sorter.#heapify(arr, heap_i, end);
         }
-        //check the front two elements
-        if((arr.length > 1) && (arr[0] > arr[1])) {
-            Sorter.#swap(arr, 0, 1);
+
+        //swap the max element with the last element and re-heapify
+        for(let heap_end = end; heap_end > start_i; heap_end--) {
+            Sorter.#swap(arr, start_i, heap_end-1);
+            await Sorter.#heapify(arr, start_i, heap_end-1);
         }
-    }
+   }
 
     static async mergeSort(arr, start_i=0, end=arr.length) {
         if ((end-start_i) < 2) return;
@@ -253,39 +256,20 @@ class Sorter {
         return largest_i;
     }
 
-    //for heap sort
-    static #get_left_child_i(pos) { return (2*pos)+1; }
-    static #get_right_child_i(pos) { return 2*(pos)+2; }
-    //static #get_parent_i(pos) { return (pos-1)/2; }
+    static async #heapify(arr, root_i=0, end=arr.length) {
+        let largest_i = root_i,
+            left_i = (2*root_i)+1,
+            right_i = 2*(root_i)+2;
 
-    static async #heapify(arr, heap_size) {
-        let left_i, right_i, biggest_i, parent_i;
+        await Promise.all([selectIndex(Sorter.delayMillis, root_i),
+                           selectIndex(Sorter.delayMillis, left_i),
+                           selectIndex(Sorter.delayMillis, right_i)]);
+        if (left_i < end && arr[left_i] > arr[largest_i]) largest_i = left_i;
+        if (right_i < end && arr[right_i] > arr[largest_i]) largest_i = right_i;
+        if (largest_i == root_i) return;
 
-        for(let i = heap_size; i >= 0; i--) {
-            //while the node has children, check if the children need to be swapped with the parent
-            parent_i = i;
-            while(Sorter.#get_left_child_i(parent_i) < heap_size)  {
-                left_i = Sorter.#get_left_child_i(parent_i);
-                right_i = Sorter.#get_right_child_i(parent_i);
-                biggest_i = parent_i;
-
-                await Promise.all([selectIndex(Sorter.delayMillis, parent_i),
-                                   selectIndex(Sorter.delayMillis, left_i),
-                                   selectIndex(Sorter.delayMillis, right_i)]);
-                
-                //if the child is bigger then the parent, swap them
-                if(arr[left_i] > arr[biggest_i]) {
-                    biggest_i = left_i;
-                }
-                if((right_i < heap_size) && (arr[right_i] > arr[biggest_i])) {
-                    biggest_i = right_i;
-                }
-                if(biggest_i != parent_i) {
-                    Sorter.#swap(arr, biggest_i, parent_i);
-                    parent_i = biggest_i; //check to make sure the sub heap is still a heap (biggest_i is now the smaller item)
-                } else break; //item is bigger then sub items so found where it is supposed to go
-            }
-        }
+        Sorter.#swap(arr, root_i, largest_i);
+        await Sorter.#heapify(arr, largest_i, end);
     }
 
     static async #merge(arr, start1_i, start2_i, end) {
