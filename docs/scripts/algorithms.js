@@ -18,40 +18,42 @@ function selectIndex(ms, index) {
 
 class Sorter {
     static delayMillis = 25;
-    static async selectionSort(arr) {
-        for(let i = arr.length-1; i >= 0; i--) {
-            Sorter.#swap(arr, await Sorter.#getLargestI(arr, i+1), i);
-            await selectIndex(Sorter.delayMillis, i);
+    static async selectionSort(arr, start_i=0, end=arr.length) {
+        for(let i = end; i > start_i; i--) {
+            Sorter.#swap(arr, await Sorter.#getLargestI(arr, start_i, i), i-1);
+            await selectIndex(Sorter.delayMillis, i-1);
         }
     }
 
-    static async bubbleSort(arr) {
-        let size = arr.length;
-        while(size > 0) {
-            size = await Sorter.#bubble(arr, size);
+    static async bubbleSort(arr, start_i=0, end=arr.length) {
+        let sorted_i = end;
+        while (sorted_i > start_i) {
+            let swap_i = start_i;
+            let right_i = start_i+1;
+            for(; right_i < sorted_i; right_i++) {
+                const left_i = right_i-1;
+                await Promise.all([selectIndex(Sorter.delayMillis, right_i),
+                                   selectIndex(Sorter.delayMillis, left_i)]);
+                if (arr[left_i] > arr[right_i]) {
+                    Sorter.#swap(arr, left_i, right_i);
+                    swap_i = right_i;
+                }
+            }
+            sorted_i = swap_i;
         }
     }
 
     static async insertionSort(arr, start_i=0, end=arr.length) {
         for(let i = start_i+1; i < end; i++) {
-            const prev_i = i-1;
-            await Promise.all([selectIndex(Sorter.delayMillis, i), 
-                               selectIndex(Sorter.delayMillis, prev_i)]);
-            if(arr[prev_i] < arr[i]) continue; //items are in order
-            
-            //find where to insert it
-            let insert_i = start_i;
-            for(let j = prev_i; j >= start_i; j--) {
-                //await selectIndex(Sorter.delayMillis, j);
-                if(arr[j] > arr[i]) {
-                    insert_i = j;
-                }
+            let insert_i = i-1, right_i = i;
+            while(insert_i >= start_i) {
+                await Promise.all([selectIndex(Sorter.delayMillis, right_i), 
+                                   selectIndex(Sorter.delayMillis, insert_i)]);
+                if(arr[insert_i] <= arr[right_i]) break;
+                Sorter.#swap(arr, insert_i, right_i);
+                right_i = insert_i;
+                insert_i--;
             }
-            //move items over
-            let tmp = arr[i];
-            await Sorter.#moveRight(arr, insert_i, i);
-            //insert
-            arr[insert_i] = tmp;
         }
     }
 
@@ -203,28 +205,9 @@ class Sorter {
         arr[i2] = tmp;
     }
 
-    static async #bubble(arr, size) {
-        let swap_pos = -1;
-        for(let i = 0; i < size-1; i++) {
-            if(arr[i] > arr[i+1]) {
-                await selectIndex(Sorter.delayMillis, i);
-                Sorter.#swap(arr, i, i+1);
-                swap_pos = i+1;
-            }
-        }
-        return swap_pos;
-    }
-
-    static async #moveRight(arr, start_i, end_i) {
-        for(let i = end_i; i > start_i; i--) {
-            arr[i] = arr[i-1];
-            await selectIndex(Sorter.delayMillis, i);
-        }
-    }
-
-    static async #getLargestI(arr, size) {
-        let largest_i = 0;
-        for(let i = 1; i < size; i++) {
+    static async #getLargestI(arr, start_i=0, end=arr.length) {
+        let largest_i = start_i;
+        for(let i = start_i+1; i < end; i++) {
             if(arr[i] > arr[largest_i]) largest_i = i;
             await selectIndex(Sorter.delayMillis, i);
         }
