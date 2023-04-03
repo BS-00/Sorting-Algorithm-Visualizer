@@ -46,7 +46,7 @@ let mainP5 = new p5(p => {
   p.backgroundColor = 'lightblue';
   p.elementColor = 'darkgrey';
   p.selectedElementColor = 'green';
-  p.heightMult = view.clientHeight/10;
+  p.heightMult = view.clientHeight/9;
   p.elementSpacing = 1.1;
   p.elementWidth = 8;
   p.lastFrameSelectedElements = [];
