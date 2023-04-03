@@ -270,12 +270,13 @@ class Sorter {
             left_i = (2*root_i)+1,
             right_i = 2*(root_i)+2;
 
-        await Promise.all([selectIndex(Sorter.delayMillis, root_i),
-                           selectIndex(Sorter.delayMillis, left_i),
-                           selectIndex(Sorter.delayMillis, right_i)]);
         if (left_i < end && arr[left_i] > arr[largest_i]) largest_i = left_i;
         if (right_i < end && arr[right_i] > arr[largest_i]) largest_i = right_i;
         if (largest_i == root_i) return;
+
+        await Promise.all([selectIndex(Sorter.delayMillis, root_i),
+                           selectIndex(Sorter.delayMillis, left_i),
+                           selectIndex(Sorter.delayMillis, right_i)]);
 
         Sorter.#swap(arr, root_i, largest_i);
         await Sorter.#heapify(arr, largest_i, end);
@@ -296,7 +297,6 @@ class Sorter {
                 container2_i++;
             }
         }
-        
         for(let i = 0; i < ret.length; i++) {
             arr[i+start1_i] = ret[i];
             await selectIndex(Sorter.delayMillis, i+start1_i);
