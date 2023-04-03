@@ -15,7 +15,6 @@ let settingsSideBarP5 = new p5(p => {
 
     p.algoTimeMillis = 0;
     p.maxVol = .15; //from 0 to 1
-    p.delayMillis;
 
     p.setup = () => {
         p.createCanvas(0, 0);
@@ -32,7 +31,7 @@ let settingsSideBarP5 = new p5(p => {
 
         nArrayElements = nElementsSlider.value;
         volume = volumeSlider.value*p.maxVol; //find a cleaner way to do this
-        p.delayMillis = parseInt(delaySlider.value, 10);
+        Sorter.delayMillis = parseInt(delaySlider.value, 10);
     }
 
     p.updateVolume = (event) => {
@@ -41,7 +40,7 @@ let settingsSideBarP5 = new p5(p => {
     }
 
     p.updateDelay = (event) => {
-        p.delayMillis = parseInt(event.target.value, 10);
+        Sorter.delayMillis = parseInt(event.target.value, 10);
     }
 
     p.updateAlgo = (event) => {
@@ -76,13 +75,12 @@ let settingsSideBarP5 = new p5(p => {
     p.stop = () => { started = false; }
 
     p.sort = async () => {
-        const intervalMillis = 10;
+        const intervalMillis = 1;
         const timer = setInterval(() => {
             p.algoTimeMillis+=intervalMillis;
             p.updateTimeStatText();
         }, intervalMillis);
 
-        Sorter.delayMillis = p.delayMillis;
         try {
             switch(algoNum) {
                 case 0: await Sorter.selectionSort(displayArray); break;
@@ -110,7 +108,7 @@ let settingsSideBarP5 = new p5(p => {
 
     p.updateTimeStatText = () => {
         const nDecimals = 2;
-        timeStatText.textContent = "Time: " + (p.algoTimeMillis*.001).toFixed(nDecimals).toString() + " s";
+        timeStatText.textContent = "Time: " + (p.algoTimeMillis/100).toFixed(nDecimals).toString() + " s";
     }
 }, 'right-sidebar');
 
