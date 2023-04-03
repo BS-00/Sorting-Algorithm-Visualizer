@@ -18,12 +18,12 @@ main {
   flex-direction: row;
   
   height: 100%;
-  width: 22%;
+  width: 21%;
   min-width: 20rem;
 
   position: fixed;
   background-color: rgb(154, 147, 147);
-  opacity: 97%;
+  opacity: 98%;
   top: 0;
   right: 0;
   z-index: 1;
@@ -33,9 +33,9 @@ main {
 .sidebarbtn {
   transition-duration: 0.2s;
   background-color: black;
-  
+
   width: 3%;
-  min-width: .2rem;
+  min-width: .1rem;
 
   opacity: 70%;
   height: 100%;
