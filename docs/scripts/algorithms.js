@@ -49,7 +49,7 @@ class Sorter {
             while(insert_i >= start_i) {
                 await Promise.all([selectIndex(Sorter.delayMillis, right_i), 
                                    selectIndex(Sorter.delayMillis, insert_i)]);
-                if(arr[insert_i] <= arr[right_i]) break;
+                if (arr[insert_i] <= arr[right_i]) break;
                 Sorter.#swap(arr, insert_i, right_i);
                 right_i = insert_i;
                 insert_i--;
@@ -79,18 +79,21 @@ class Sorter {
 
     static async quickSort(arr, start_i=0, end=arr.length) {
         let size = (end-start_i);
-        if((size == 2) && (arr[start_i] > arr[end-1])) {
-            Sorter.#swap(arr, start_i, end-1);
+        if(size <= 2) {
+            if (size == 2 && arr[start_i] > arr[end-1]) {
+                await Promise.all([selectIndex(Sorter.delayMillis, start_i), 
+                                   selectIndex(Sorter.delayMillis, end-1)]);
+                Sorter.#swap(arr, start_i, end-1);
+            } else await selectIndex(Sorter.delayMillis, start_i);
+            return;
         }
-        if(size <= 2) return;
 
         let pivot_i;
-        await Sorter.#partition(arr, start_i, end).then(res => {
-            pivot_i = res;
-        });
-        await selectIndex(Sorter.delayMillis, pivot_i);
-        await Sorter.quickSort(arr, start_i, pivot_i);
-        await Sorter.quickSort(arr, pivot_i+1, end);
+        await Sorter.#partition(arr, start_i, end).then(res => { pivot_i = res; });
+        await Promise.all([selectIndex(Sorter.delayMillis, pivot_i),
+                           Sorter.quickSort(arr, start_i, pivot_i)]);
+        await Promise.all([selectIndex(Sorter.delayMillis, pivot_i),
+                           Sorter.quickSort(arr, pivot_i+1, end)]);
     }
     
     static #run_size = 16; //should be a power of two
@@ -271,7 +274,7 @@ class Sorter {
         }
     }
 
-    static async #partition(arr, start_i, end) {
+    static async #partition(arr, start_i=0, end=arr.length) {
         //arr[start_i] is the pivot
         let small_element_i = start_i+1, large_element_i = end-1;
         while (small_element_i < large_element_i) {
