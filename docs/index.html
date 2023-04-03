@@ -20,7 +20,7 @@
   <body class="h-100 m-0">
     <div class="m-0 w-100 h-100" id="array-view"></div>
     <div class="overflow-auto sidebar" id="right-sidebar">
-      <button class="button sidebarbtn"></button>
+      <button class="sidebarbtn"></button>
       <div class="sidebar-content w-100 m-0">
         <p class="h1 text-center ">Statistics</p>
         <div id="sorting-stats">
@@ -31,6 +31,10 @@
           <form lass="text-center">
             <label class="fs-4 m-1">Number of Elements</label>
             <input type="range" value="30" min="2" max="200" class="form-control-range form-control-range-lg m-2 w-100 mx-auto" id="n-elements"></input>
+          </form>
+          <form class="text-center">
+            <label class="fs-4 m-1">Delay</label>
+            <input type="range" value="30" min="0" max="100" step="1" class="form-control-range form-control-range-lg w-100" id="delay"></input>
           </form>
           <select class="form-control form-control-lg w-100 m-2 mx-auto" title="Algorithm" data-style="btn-primary" id="selected-algorithm-drop">
             <option value="0">Selection Sort</option>
@@ -53,10 +57,6 @@
           <form class="text-center">
             <label class="fs-4 m-1">Volume</label>
             <input type="range" value="0.3" min="0" max="1" step=".01" class="form-control-range form-control-range-lg w-100" id="volume"></input>
-          </form>
-          <form class="text-center">
-            <label class="fs-4 m-1">Delay</label>
-            <input type="range" value="30" min="0" max="100" step="1" class="form-control-range form-control-range-lg w-100" id="delay"></input>
           </form>
         </div>
       </div>
