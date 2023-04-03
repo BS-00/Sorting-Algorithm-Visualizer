@@ -27,12 +27,13 @@ let settingsSideBarP5 = new p5(p => {
         volumeSlider.addEventListener('input', p.updateVolume);
 
         nArrayElements = nElementsSlider.value;
-        volume = volumeSlider.value;
+        volume = volumeSlider.value*.75; //find a cleaner way to do this
     }
 
     p.updateVolume = (event) => {
-        const frac = event.target.value / event.target.max;
-        volume = Math.pow(frac, 2);
+        const max_vol = .75;
+        const frac = parseFloat(event.target.value, 10)/parseFloat(event.target.max, 10);
+        volume = Math.pow(frac, 2)*max_vol;
     }
 
     p.updateAlgo = (event) => {
@@ -64,10 +65,7 @@ let settingsSideBarP5 = new p5(p => {
         p.updateTimeStatText();
         p.sort();
     }
-
-    p.stop = () => {
-        started = false;
-    }
+    p.stop = () => { started = false; }
 
     p.sort = async () => {
         const intervalMillis = 10;
@@ -88,6 +86,7 @@ let settingsSideBarP5 = new p5(p => {
                 case 7: await Sorter.combSort(displayArray); break;
                 case 8: await Sorter.brickSort(displayArray); break;
                 case 9: await Sorter.gnomeSort(displayArray); break;
+                case 10: await Sorter.shellSort(displayArray); break;
                 default: break;
             }
         } catch (e) {

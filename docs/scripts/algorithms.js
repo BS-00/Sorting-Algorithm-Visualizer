@@ -17,7 +17,7 @@ function selectIndex(ms, index) {
 }
 
 class Sorter {
-    static delayMillis = 30;
+    static delayMillis = 25;
     static async selectionSort(arr) {
         for(let i = arr.length-1; i >= 0; i--) {
             Sorter.#swap(arr, await Sorter.#getLargestI(arr, i+1), i);
@@ -34,21 +34,24 @@ class Sorter {
 
     static async insertionSort(arr, start_i=0, end=arr.length) {
         for(let i = start_i+1; i < end; i++) {
-            let prev_i = i-1;
+            const prev_i = i-1;
+            await Promise.all([selectIndex(Sorter.delayMillis, i), 
+                               selectIndex(Sorter.delayMillis, prev_i)]);
             if(arr[prev_i] < arr[i]) continue; //items are in order
             
             //find where to insert it
             let insert_i = start_i;
             for(let j = prev_i; j >= start_i; j--) {
-                if(arr[j] > arr[i]) insert_i = j;
-                await this.selectionSort(Sorter.delayMillis);
+                //await selectIndex(Sorter.delayMillis, j);
+                if(arr[j] > arr[i]) {
+                    insert_i = j;
+                }
             }
             //move items over
             let tmp = arr[i];
             await Sorter.#moveRight(arr, insert_i, i);
             //insert
             arr[insert_i] = tmp;
-            await selectIndex(Sorter.delayMillis, i);
         }
     }
 
@@ -169,6 +172,28 @@ class Sorter {
                 right_i--;
             } else right_i++;
         }
+    }
+
+    static #shell_shrink_factor = 2;
+    static async shellSort(arr, start_i=0, end=arr.length) {
+        let swap = true;
+        let gap_size = Math.floor((end-start_i)/Sorter.#shell_shrink_factor);
+        while ((swap == true || gap_size > 1)) {
+            swap = false;
+            let left_i = start_i, right_i = left_i+gap_size;
+            while (right_i < end) {
+                await Promise.all([selectIndex(Sorter.delayMillis, left_i),
+                                   selectIndex(Sorter.delayMillis, right_i)]);
+                if (arr[left_i] > arr[right_i]) {
+                    Sorter.#swap(arr, left_i, right_i);
+                    swap = true;
+                }
+                left_i++;
+                right_i++;
+            }
+            gap_size = Math.floor(gap_size/Sorter.#shell_shrink_factor);
+        }
+        await Sorter.insertionSort(arr, start_i, end);
     }
 
     //private helper methods
