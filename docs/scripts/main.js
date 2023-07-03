@@ -21,17 +21,17 @@ function playNote(freq) {
   oscNode.type = "sine";
   oscNode.decay = 0;
 
-  const popTime = .08;
+  const popTime = 0.01;
   const gainNode = audioCtx.createGain();
   if  (Number(volume).toFixed(nDecimals) == 0) {
     gainNode.gain.value = 0;
   } else {
     //ramps the volume from essentially 0 to desired and from desired to 0 to reduce popping sound
     //start
-    gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(Number(volume).toFixed(nDecimals), audioCtx.currentTime+parseFloat(popTime));
     //end
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+audioDurationSec-parseFloat(popTime));
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+audioDurationSec-parseFloat(popTime));
   }
 
   const compressor = audioCtx.createDynamicsCompressor();

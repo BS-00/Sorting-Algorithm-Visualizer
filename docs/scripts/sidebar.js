@@ -2,7 +2,6 @@ let volume;
 let settingsSideBarP5 = new p5(p => {
     const sideBar = document.getElementById('right-sidebar');
     const sidebarAlgoDrop = document.getElementById('selected-algorithm-drop');
-    const timeStatText = document.getElementById('time-stat-text');
 
     const sidebarBtn = sideBar.querySelector('.sidebarbtn');
     const randomizeBtn = document.getElementById('randomize-btn');
@@ -13,7 +12,6 @@ let settingsSideBarP5 = new p5(p => {
     const volumeSlider = document.getElementById('volume');
     const delaySlider = document.getElementById('delay');
 
-    p.algoTimeMillis = 0;
     p.maxVol = .15; //from 0 to 1
 
     p.setup = () => {
@@ -44,7 +42,7 @@ let settingsSideBarP5 = new p5(p => {
     }
 
     p.updateAlgo = (event) => {
-        if(started) return;
+        if(started) p.stop();
         algoNum = Number(event.target.value);
     }
 
@@ -68,19 +66,11 @@ let settingsSideBarP5 = new p5(p => {
     p.start = () => {
         if(started) return;
         started = true;
-        p.algoTimeMillis = 0;
-        p.updateTimeStatText();
         p.sort();
     }
     p.stop = () => { started = false; }
 
     p.sort = async () => {
-        const intervalMillis = 1;
-        const timer = setInterval(() => {
-            p.algoTimeMillis+=intervalMillis;
-            p.updateTimeStatText();
-        }, intervalMillis);
-
         try {
             switch(algoNum) {
                 case 0: await Sorter.selectionSort(displayArray); break;
@@ -103,12 +93,6 @@ let settingsSideBarP5 = new p5(p => {
         }
         started = false;
         selectedElementIndex = -1;
-        clearInterval(timer);
-    }
-
-    p.updateTimeStatText = () => {
-        const nDecimals = 2;
-        timeStatText.textContent = "Time: " + (p.algoTimeMillis/100).toFixed(nDecimals).toString() + " s";
     }
 }, 'right-sidebar');
 
